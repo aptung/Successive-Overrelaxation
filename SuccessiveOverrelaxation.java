@@ -8,10 +8,22 @@ public class SuccessiveOverrelaxation {
 							{0, 9, 4, -2},
 							{1, 0, -7, 5}};
 		double[] testB = {2, 21, -12, -6};
-		sor(testA, testB, 0.5);
+		int bestIters = 10000;
+		double bestOmega = 0;
+		for (int i=0; i<1900; i++) {
+			double omega = 0.1 + 0.001*i;
+			double[][] result = sor(testA, testB, omega);
+			System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
+			printArr(result[0]);
+			if (result[1][0]<=bestIters) {
+				bestIters = (int) result[1][0];
+				bestOmega = omega;
+			}
+		}
+		System.out.println("Best omega is " + bestOmega + " which takes " + bestIters + " iterations");
 	}
 	
-	public static double[] sor (double[][] A, double[] b, double omega) {
+	public static double[][] sor (double[][] A, double[] b, double omega) {
 		double[] phi = getGuess(b.length);
 		double residual = computeResidual(A, b, phi);
 		int iteration = 0;
@@ -27,10 +39,10 @@ public class SuccessiveOverrelaxation {
 			}
 			residual = computeResidual(A, b, phi);
 			iteration++;
-			System.out.print(iteration + ": ");
-			printArr(phi);
+			// System.out.print(iteration + ": ");
+			// printArr(phi);
 		}
-		return phi;
+		return new double[][] {phi, {iteration}};
 	}
 	
 	public static double[] getGuess (int len) {
