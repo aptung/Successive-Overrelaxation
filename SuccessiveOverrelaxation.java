@@ -10,11 +10,15 @@ public class SuccessiveOverrelaxation {
 		double[] testB = {2, 21, -12, -6};
 		int bestIters = 10000;
 		double bestOmega = 0;
-		for (int i=0; i<1900; i++) {
+		for (int i=0; i<472; i++) {
 			double omega = 0.1 + 0.001*i;
 			double[][] result = sor(testA, testB, omega);
-			System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
-			printArr(result[0]);
+			// System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
+			// printArr(result[0]);
+			for (int j=0; j<result[1][0]/10; j++) {
+				System.out.print('*');
+			}
+			System.out.println();
 			if (result[1][0]<=bestIters) {
 				bestIters = (int) result[1][0];
 				bestOmega = omega;
