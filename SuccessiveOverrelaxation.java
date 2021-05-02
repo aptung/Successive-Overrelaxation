@@ -7,9 +7,8 @@ public class SuccessiveOverrelaxation {
 							{-5, -4, 10, 8},
 							{0, 9, 4, -2},
 							{1, 0, -7, 5}};
-		printArr(multiplyMatrix(testA, new double[] {3, -2, 2, 1}));
+		// printArr(multiplyMatrix(testA, new double[] {3, -2, 2, 1}));
 		double[] testB = {2, 21, -12, -6};
-		printArr(sor(testA, testB, 0.5)[0]);
 		int bestIters = 1000000000;
 		double bestTime = 1000000000;
 		double bestOmegaIters = 0;
