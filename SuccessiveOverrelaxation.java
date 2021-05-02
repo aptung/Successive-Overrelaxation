@@ -1,6 +1,6 @@
 
 public class SuccessiveOverrelaxation {
-	static final double THRESHOLD = (double) 0.0000001;
+	static final double THRESHOLD = 0.0000001;
 	
 	public static void main (String args[]) {
 		double[][] testA = {{4, -1, -6, 0},
