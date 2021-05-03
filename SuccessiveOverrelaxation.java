@@ -7,7 +7,6 @@ public class SuccessiveOverrelaxation {
 							{-5, -4, 10, 8},
 							{0, 9, 4, -2},
 							{1, 0, -7, 5}};
-		// printArr(multiplyMatrix(testA, new double[] {3, -2, 2, 1}));
 		double[] testB = {2, 21, -12, -6};
 		int bestIters = 1000000000;
 		double bestTime = 1000000000;
@@ -18,8 +17,10 @@ public class SuccessiveOverrelaxation {
 			double startTime = System.nanoTime();
 			double[][] result = sor(testA, testB, omega);
 			double endTime = System.nanoTime();
-			 System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
-			 printArr(result[0]);
+			System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
+			printArr(result[0]);
+			
+			// Creates a histogram showing the number of iterations required for each omega
 			for (int j=0; j<result[1][0]/10; j++) {
 				System.out.print('*');
 			}
@@ -39,6 +40,9 @@ public class SuccessiveOverrelaxation {
 		System.out.println("Fastest omega is " + bestOmegaTime + " which takes " + bestTime + " nanoseconds");
 	}
 	
+	// Performs sor using inputs A, b, omega until the residual is less than THRESHOLD
+	// Returns a 2D array composed of the result of sor (1D array) and a 1D array with
+	// the number of iterations it took
 	public static double[][] sor (double[][] A, double[] b, double omega) {
 		double[] phi = getGuess(b.length);
 		double residual = computeResidual(A, b, phi);
@@ -55,12 +59,11 @@ public class SuccessiveOverrelaxation {
 			}
 			residual = computeResidual(A, b, phi);
 			iteration++;
-			// System.out.print(iteration + ": ");
-			// printArr(phi);
 		}
 		return new double[][] {phi, {iteration}};
 	}
 	
+	// Returns an initial guess (0 vector) for sor
 	public static double[] getGuess (int len) {
 		double[] guess = new double[len];
 		for (int i=0; i<guess.length; i++) {
@@ -69,6 +72,8 @@ public class SuccessiveOverrelaxation {
 		return guess;
 	}
 	
+	// Computes the residual (a measure of "how good" of a guess phi is)
+	// by computing the euclidean distance between A*phi and b (||a*phi-b||)
 	public static double computeResidual (double[][] A, double[] b, double[] phi) {
 		double[] product = multiplyMatrix(A, phi);
 		double[] error = new double[phi.length];
