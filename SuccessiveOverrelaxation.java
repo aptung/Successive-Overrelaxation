@@ -1,18 +1,19 @@
+import java.util.Random;
 
 public class SuccessiveOverrelaxation {
-	static final double THRESHOLD = 0.0000001;
+	static final Random RAND = new Random();
+	static final double THRESHOLD = 0.0000000001;
 	
 	public static void main (String args[]) {
-		double[][] testA = {{4, -1, -6, 0},
-							{-5, -4, 10, 8},
-							{0, 9, 4, -2},
-							{1, 0, -7, 5}};
-		double[] testB = {2, 21, -12, -6};
+		double[][] testA = generateRandMat(2, 2);
+		printTwoDArr(testA);
+		testA = multiplyMatrices(transpose(testA), testA);
+		double[] testB = generateRandMat(2, 1)[0];
 		int bestIters = 1000000000;
 		double bestTime = 1000000000;
 		double bestOmegaIters = 0;
 		double bestOmegaTime = 0;
-		for (int i=1; i<570; i++) {
+		for (int i=1; i<1999; i++) {
 			double omega = 0.001*i;
 			double startTime = System.nanoTime();
 			double[][] result = sor(testA, testB, omega);
@@ -75,7 +76,7 @@ public class SuccessiveOverrelaxation {
 	// Computes the residual (a measure of "how good" of a guess phi is)
 	// by computing the euclidean distance between A*phi and b (||a*phi-b||)
 	public static double computeResidual (double[][] A, double[] b, double[] phi) {
-		double[] product = multiplyMatrix(A, phi);
+		double[] product = multiplyMatrixVector(A, phi);
 		double[] error = new double[phi.length];
 		for (int i=0; i<phi.length; i++) {
 			error[i] = product[i] - b[i];
@@ -87,8 +88,49 @@ public class SuccessiveOverrelaxation {
 		return Math.pow(distance, 0.5);
 	}
 	
+	// Generates a nxm matrix with random values between 0 and 1
+	public static double[][] generateRandMat (int n, int m){
+		double[][] randomMat = new double[n][n];
+		for (int i=0; i<n; i++) {
+			for (int j=0; j<m; j++) {
+				randomMat[i][j] = Math.random();
+			}
+		}
+		return randomMat;
+	}
+	
+	// Returns the transpose of A (A^T)
+	public static double[][] transpose (double[][] A){
+		for (int i=0; i<A.length; i++) {
+			for (int j=0; j<A.length; j++) {
+				if (j>i) {
+					double temp = A[i][j];
+					A[i][j] = A[j][i];
+					A[j][i] = temp;
+				}
+			}
+		}
+		return A;
+	}
+	
+	// Multiplies A*B assuming A and B are both nxn
+	public static double[][] multiplyMatrices (double[][] A, double[][] B){
+		double[][] result = new double[A.length][A.length];
+		for (int i=0; i<A.length; i++) {
+			for (int j=0; j<A.length; j++) {
+				double sum = 0;
+				for (int k=0; k<A.length; k++) {
+					sum = sum + A[i][k]*B[k][j];
+				}
+				result[i][j] = sum;
+			}
+		}
+		return result;
+		
+	}
+	
 	// Returns A*phi
-	public static double[] multiplyMatrix (double[][] A, double[] phi) {
+	public static double[] multiplyMatrixVector (double[][] A, double[] phi) {
 		double[] result = new double[phi.length];
 		for (int i=0; i<result.length; i++) {
 			double sum = 0;
@@ -100,6 +142,14 @@ public class SuccessiveOverrelaxation {
 		return result;
 	}
 	
+	public static void printTwoDArr (double[][] arr) {
+		for (int i=0; i<arr.length; i++) {
+			for (int j=0; j<arr[0].length; j++) {
+				System.out.print(arr[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
 	
 	public static void printArr (double[] arr) {
 		for (int i=0; i<arr.length; i++) {
