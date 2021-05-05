@@ -11,7 +11,7 @@ public class SuccessiveOverrelaxation {
 //	(as are the times for the non-optimal omega)
 //	Hence sometimes the average time goes down for larger n
 	
-//	Also another thing that is noticable is that the optimal omegas tend to be higher for larger n
+//	Also another thing that is noticeable is that the optimal omegas tend to be higher for larger n
 // 
 //	n = 1: 281.25 nanoseconds (0.28 milliseconds) -- as a benchmark
 //	n = 2: 4805.3 nanoseconds (4.8 milliseconds)
