@@ -27,9 +27,15 @@ public class SuccessiveOverrelaxation {
 	public static void main (String args[]) {
 		double sum = 0;
 		for (int i=1; i<=20; i++) {
-			sum = sum + sorTiming(3);
-			System.out.println("Current total: " + sum);
-			System.out.println();
+			double time = sorTiming(2);
+			if (time != 1000000000) {
+				sum = sum + time;
+				 System.out.println("Current total: " + sum);
+				 System.out.println();
+			}
+			else {
+				// System.out.println("Whoops didn't converge");
+			}
 		}
 		System.out.println(sum/20);
 	}
@@ -50,27 +56,36 @@ public class SuccessiveOverrelaxation {
 			double startTime = System.nanoTime();
 			double[][] result = sor(testA, testB, omega);
 			double endTime = System.nanoTime();
-			// System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
-			// printArr(result[0]);
+			if (result[0][0]!=-1) {
+//				System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
+//				printArr(result[0]);
+//				System.out.print("and took " + (endTime-startTime) + " nanoseconds");
+//				System.out.println();
+				
+				if (result[1][0]<=bestIters) {
+					bestIters = (int) result[1][0];
+					bestOmegaIters = omega;
+				}
+				if (endTime-startTime<bestTime) {
+					bestTime = endTime - startTime;
+					bestOmegaTime = omega;
+				}
+			}
+			else {
+//				System.out.println("Whoops, " + omega + " became too big");
+			}
 			
 			// Creates a histogram showing the number of iterations required for each omega
 //			for (int j=0; j<result[1][0]/10; j++) {
 //				System.out.print('*');
 //			}
 			// System.out.println();
-			if (result[1][0]<=bestIters) {
-				bestIters = (int) result[1][0];
-				bestOmegaIters = omega;
-			}
-			if (endTime-startTime<bestTime) {
-				bestTime = endTime - startTime;
-				bestOmegaTime = omega;
-			}
+			
 		}
 //		System.out.println("Solution: ");
 //		printArr(sor(testA, testB, bestOmegaIters)[0]);
-		System.out.println("Best omega is " + bestOmegaIters + " which takes " + bestIters + " iterations");
-		System.out.println("Fastest omega is " + bestOmegaTime + " which takes " + bestTime + " nanoseconds");
+//		System.out.println("Best omega is " + bestOmegaIters + " which takes " + bestIters + " iterations");
+//		System.out.println("Fastest omega is " + bestOmegaTime + " which takes " + bestTime + " nanoseconds");
 		return bestTime;
 	}
 	
@@ -90,6 +105,9 @@ public class SuccessiveOverrelaxation {
 					}
 				}
 				phi[i] = (1 - omega) * phi[i] + (omega/A[i][i])*(b[i] - sigma);
+			}
+			if (!isValid(phi)) {
+				return new double[][] {{-1}, {-1}};
 			}
 			residual = computeResidual(A, b, phi);
 			iteration++;
@@ -175,6 +193,18 @@ public class SuccessiveOverrelaxation {
 		return result;
 	}
 	
+	public static boolean isValid(double[] arr) {
+		for (int j=0; j<arr.length; j++) {
+			if (Double.isNaN(arr[j]) || Double.isInfinite(arr[j])) {
+				return false;
+			}
+			if (arr[j]>Math.pow(10, 305)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public static void printTwoDArr (double[][] arr) {
 		for (int i=0; i<arr.length; i++) {
 			for (int j=0; j<arr[0].length; j++) {
@@ -188,7 +218,6 @@ public class SuccessiveOverrelaxation {
 		for (int i=0; i<arr.length; i++) {
 			System.out.print(arr[i] + " ");
 		}
-		System.out.println();
 	}
 	
 }
