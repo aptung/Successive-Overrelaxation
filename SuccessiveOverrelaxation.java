@@ -4,28 +4,58 @@ public class SuccessiveOverrelaxation {
 	static final Random RAND = new Random();
 	static final double THRESHOLD = 0.0000000001;
 	
+//	Some sample times (averages over 20 trials of the times it takes 
+//	for the fastest-converging omega to finish)
+//	
+//	Note that the fastest times are highly variable across different arrays
+//	(as are the times for the non-optimal omega)
+//	Hence sometimes the average time goes down for larger n
+	
+//	Also another thing that is noticable is that the optimal omegas tend to be higher for larger n
+// 
+//  	n = 1: 281.25 nanoseconds (0.28 milliseconds) -- as a benchmark
+//  	n = 2: 4805.3 nanoseconds (4.8 milliseconds)
+//	n = 3: 44527.3 nanoseconds (44.5 milliseconds)
+//  	n = 4: 59373.55 nanoseconds (59.4 milliseconds)
+//	n = 5: 121993.45 nanoseconds (122.0 milliseconds)
+//	n = 6: 181313.65 nanoseconds (181.3 milliseconds)
+//	n = 7: 132130.35 nanoseconds (132.1 milliseconds)
+//	n = 8: 228510.60 nanoseconds (228.5 milliseconds)
+//	n = 9: 151463.00 nanoseconds (151.5 milliseconds)
+//	n = 10: 195300.00 nanoseconds (195.3 milliseconds)
+
 	public static void main (String args[]) {
-		double[][] testA = generateRandMat(2, 2);
-		printTwoDArr(testA);
+		double sum = 0;
+		for (int i=1; i<=20; i++) {
+			sum = sum + sorTiming(3);
+			System.out.println("Current total: " + sum);
+			System.out.println();
+		}
+		System.out.println(sum/20);
+	}
+	
+	public static double sorTiming (int n) {
+		double[][] testA = generateRandMat(n, n);
+		// printTwoDArr(testA);
 		testA = multiplyMatrices(transpose(testA), testA);
-		double[] testB = generateRandMat(2, 1)[0];
+		double[] testB = generateRandMat(n, 1)[0];
 		int bestIters = 1000000000;
 		double bestTime = 1000000000;
 		double bestOmegaIters = 0;
 		double bestOmegaTime = 0;
-		for (int i=1; i<1999; i++) {
-			double omega = 0.001*i;
+		for (int i=1; i<199; i++) {
+			double omega = 0.01*i;
 			double startTime = System.nanoTime();
 			double[][] result = sor(testA, testB, omega);
 			double endTime = System.nanoTime();
-			System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
-			printArr(result[0]);
+			// System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
+			// printArr(result[0]);
 			
 			// Creates a histogram showing the number of iterations required for each omega
-			for (int j=0; j<result[1][0]/10; j++) {
-				System.out.print('*');
-			}
-			System.out.println();
+//			for (int j=0; j<result[1][0]/10; j++) {
+//				System.out.print('*');
+//			}
+			// System.out.println();
 			if (result[1][0]<=bestIters) {
 				bestIters = (int) result[1][0];
 				bestOmegaIters = omega;
@@ -35,10 +65,11 @@ public class SuccessiveOverrelaxation {
 				bestOmegaTime = omega;
 			}
 		}
-		System.out.println("Solution: ");
-		printArr(sor(testA, testB, bestOmegaIters)[0]);
+//		System.out.println("Solution: ");
+//		printArr(sor(testA, testB, bestOmegaIters)[0]);
 		System.out.println("Best omega is " + bestOmegaIters + " which takes " + bestIters + " iterations");
 		System.out.println("Fastest omega is " + bestOmegaTime + " which takes " + bestTime + " nanoseconds");
+		return bestTime;
 	}
 	
 	// Performs sor using inputs A, b, omega until the residual is less than THRESHOLD
