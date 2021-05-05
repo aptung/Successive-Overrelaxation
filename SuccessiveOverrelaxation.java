@@ -13,10 +13,10 @@ public class SuccessiveOverrelaxation {
 	
 //	Also another thing that is noticable is that the optimal omegas tend to be higher for larger n
 // 
-//  	n = 1: 281.25 nanoseconds (0.28 milliseconds) -- as a benchmark
-//  	n = 2: 4805.3 nanoseconds (4.8 milliseconds)
+//  n = 1: 281.25 nanoseconds (0.28 milliseconds) -- as a benchmark
+//  n = 2: 4805.3 nanoseconds (4.8 milliseconds)
 //	n = 3: 44527.3 nanoseconds (44.5 milliseconds)
-//  	n = 4: 59373.55 nanoseconds (59.4 milliseconds)
+//  n = 4: 59373.55 nanoseconds (59.4 milliseconds)
 //	n = 5: 121993.45 nanoseconds (122.0 milliseconds)
 //	n = 6: 181313.65 nanoseconds (181.3 milliseconds)
 //	n = 7: 132130.35 nanoseconds (132.1 milliseconds)
@@ -34,6 +34,8 @@ public class SuccessiveOverrelaxation {
 		System.out.println(sum/20);
 	}
 	
+	// Returns the amount of time (in nanoseconds) the fastest omega took
+	// for a random nxn matrix and random nxn vector
 	public static double sorTiming (int n) {
 		double[][] testA = generateRandMat(n, n);
 		// printTwoDArr(testA);
