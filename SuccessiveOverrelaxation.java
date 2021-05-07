@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class SuccessiveOverrelaxation {
 	static final Random RAND = new Random();
-	static final double THRESHOLD = 0.0000000001;
+	static final double THRESHOLD = 0.000000000001;
 	
 //	Some sample times (averages over 20 trials of the times it takes 
 //	for the fastest-converging omega to finish)
@@ -26,8 +26,8 @@ public class SuccessiveOverrelaxation {
 
 	public static void main (String args[]) {
 		double sum = 0;
-		for (int i=1; i<=20; i++) {
-			double time = sorTiming(2);
+		for (int i=1; i<=1; i++) {
+			double time = sorTiming(3);
 			if (time != 1000000000) {
 				sum = sum + time;
 				 System.out.println("Current total: " + sum);
@@ -51,16 +51,16 @@ public class SuccessiveOverrelaxation {
 		double bestTime = 1000000000;
 		double bestOmegaIters = 0;
 		double bestOmegaTime = 0;
-		for (int i=1; i<199; i++) {
+		for (int i=1; i<200; i++) {
 			double omega = 0.01*i;
 			double startTime = System.nanoTime();
 			double[][] result = sor(testA, testB, omega);
 			double endTime = System.nanoTime();
 			if (result[0][0]!=-1) {
-//				System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
-//				printArr(result[0]);
-//				System.out.print("and took " + (endTime-startTime) + " nanoseconds");
-//				System.out.println();
+				System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
+				printArr(result[0]);
+				System.out.print("and took " + (endTime-startTime) + " nanoseconds");
+				System.out.println();
 				
 				if (result[1][0]<=bestIters) {
 					bestIters = (int) result[1][0];
@@ -72,7 +72,7 @@ public class SuccessiveOverrelaxation {
 				}
 			}
 			else {
-//				System.out.println("Whoops, " + omega + " became too big");
+				System.out.println("Whoops, " + omega + " became too big");
 			}
 			
 			// Creates a histogram showing the number of iterations required for each omega
