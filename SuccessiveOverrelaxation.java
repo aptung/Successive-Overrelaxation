@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class SuccessiveOverrelaxation {
 	static final Random RAND = new Random();
-	static final double THRESHOLD = 0.000000000001;
+	static final double THRESHOLD = 0.000000001;
 	
 //	Some sample times (averages over 20 trials of the times it takes 
 //	for the fastest-converging omega to finish)
@@ -25,31 +25,42 @@ public class SuccessiveOverrelaxation {
 //	n = 10: 195300.00 nanoseconds (195.3 milliseconds)
 
 	public static void main (String args[]) {
+		int N = 20;
 		double sum = 0;
-		for (int i=1; i<=1; i++) {
+		for (int i=1; i<=N; i++) {
 			double time = sorTiming(3);
-			if (time != 1000000000) {
+			if (time != -1) {
 				sum = sum + time;
-				 System.out.println("Current total: " + sum);
-				 System.out.println();
+//				 System.out.println("Current total: " + sum);
+//				 System.out.println();
 			}
 			else {
 				// System.out.println("Whoops didn't converge");
 			}
+			System.out.println("----------------------------------------------------------");
 		}
-		System.out.println(sum/20);
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("Average time across " + N + " trials: " + sum/20 + " milliseconds");
 	}
 	
 	// Returns the amount of time (in nanoseconds) the fastest omega took
 	// for a random nxn matrix and random nxn vector
-	public static double sorTiming (int n) {
+	public static double sorTiming (int n) { 
 		double[][] testA = generateRandMat(n, n);
-		// printTwoDArr(testA);
 		testA = multiplyMatrices(transpose(testA), testA);
-		double[] testB = generateRandMat(n, 1)[0];
+		System.out.println("The matrix is:");
+		printTwoDArr(testA);
+		double[] testB = generateRandMat(1, n)[0];
+		System.out.println();
+		System.out.println("with vector:");
+		printArr(testB);
+		System.out.println();
+		System.out.println();
 		int bestIters = 1000000000;
-		double bestTime = 1000000000;
-		double bestOmegaIters = 0;
+		double bestTime = 2147000000;
+		double bestOmegaIters = -1;
 		double bestOmegaTime = 0;
 		for (int i=1; i<200; i++) {
 			double omega = 0.01*i;
@@ -59,20 +70,20 @@ public class SuccessiveOverrelaxation {
 			if (result[0][0]!=-1) {
 				System.out.print("omega = " + omega + " required " + result[1][0] + " iterations and returned ");
 				printArr(result[0]);
-				System.out.print("and took " + (endTime-startTime) + " nanoseconds");
+				System.out.print("and took " + (endTime-startTime)/1000 + " milliseconds");
 				System.out.println();
 				
 				if (result[1][0]<=bestIters) {
 					bestIters = (int) result[1][0];
 					bestOmegaIters = omega;
 				}
-				if (endTime-startTime<bestTime) {
-					bestTime = endTime - startTime;
+				if ((endTime-startTime)/1000<bestTime) {
+					bestTime = (endTime - startTime)/1000;
 					bestOmegaTime = omega;
 				}
 			}
 			else {
-				System.out.println("Whoops, " + omega + " became too big");
+				System.out.println("Whoops, omega = " + omega + " didn't converge");
 			}
 			
 			// Creates a histogram showing the number of iterations required for each omega
@@ -82,11 +93,20 @@ public class SuccessiveOverrelaxation {
 			// System.out.println();
 			
 		}
-//		System.out.println("Solution: ");
-//		printArr(sor(testA, testB, bestOmegaIters)[0]);
-//		System.out.println("Best omega is " + bestOmegaIters + " which takes " + bestIters + " iterations");
-//		System.out.println("Fastest omega is " + bestOmegaTime + " which takes " + bestTime + " nanoseconds");
-		return bestTime;
+		if (bestOmegaIters == -1) {
+			System.out.println("Oops, never converged");
+			return -1;
+		}
+		else {
+			System.out.println("(Approximate) solution: ");
+			printArr(sor(testA, testB, bestOmegaIters)[0]);
+			System.out.println();
+			System.out.println();
+			System.out.println("Best omega is " + bestOmegaIters + " which takes " + bestIters + " iterations");
+			System.out.println("Fastest omega is " + bestOmegaTime + " which takes " + bestTime + " milliseconds");
+			return bestTime;
+		}
+		
 	}
 	
 	// Performs sor using inputs A, b, omega until the residual is less than THRESHOLD
@@ -139,12 +159,12 @@ public class SuccessiveOverrelaxation {
 		return Math.pow(distance, 0.5);
 	}
 	
-	// Generates a nxm matrix with random values between 0 and 1
+	// Generates a nxm matrix with random values between -1 and 1
 	public static double[][] generateRandMat (int n, int m){
-		double[][] randomMat = new double[n][n];
+		double[][] randomMat = new double[n][m];
 		for (int i=0; i<n; i++) {
 			for (int j=0; j<m; j++) {
-				randomMat[i][j] = Math.random();
+				randomMat[i][j] = Math.random()*2-1;
 			}
 		}
 		return randomMat;
