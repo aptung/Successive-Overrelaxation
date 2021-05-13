@@ -27,12 +27,14 @@ public class SuccessiveOverrelaxation {
 	public static void main (String args[]) {
 		int N = 20;
 		double sum = 0;
-		for (int i=1; i<=N; i++) {
+		int numberIters = 0;
+		while (numberIters<=N) {
 			double time = sorTiming(3);
 			if (time != -1) {
 				sum = sum + time;
 //				 System.out.println("Current total: " + sum);
 //				 System.out.println();
+				numberIters++;
 			}
 			else {
 				// System.out.println("Whoops didn't converge");
